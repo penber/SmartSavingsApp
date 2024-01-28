@@ -3,6 +3,10 @@
 # Description
 Smart Savings est une application conçue pour aider les étudiants à gérer leurs finances personnelles. Grâce à son interface conviviale et ses fonctionnalités avancées, elle permet de planifier et de suivre efficacement les budgets et les dépenses.
 
+Voici les coordonnées d'un utilisateur test ayant des budget et dépenses préfet : 
+email : 'test2@gmail.com'
+Mot de passe : 'password'
+
 # Fonctionnalités
 
 - Gestion des budgets: Permet de créer des budgets personnalisés, d'allouer des fonds et de suivre les dépenses par catégorie pour une meilleure gestion financière.
