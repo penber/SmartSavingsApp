@@ -1,233 +1,153 @@
 <template>
   <ion-app>
-    <ion-split-pane content-id="main-content">
-      <ion-menu content-id="main-content" type="overlay">
-        <ion-content>
-          <ion-list id="inbox-list">
-            <ion-list-header>Inbox</ion-list-header>
-            <ion-note>hi@ionicframework.com</ion-note>
-
-            <ion-menu-toggle :auto-hide="false" v-for="(p, i) in appPages" :key="i">
-              <ion-item @click="selectedIndex = i" router-direction="root" :router-link="p.url" lines="none" :detail="false" class="hydrated" :class="{ selected: selectedIndex === i }">
-                <ion-icon aria-hidden="true" slot="start" :ios="p.iosIcon" :md="p.mdIcon"></ion-icon>
-                <ion-label>{{ p.title }}</ion-label>
-              </ion-item>
+    <ion-menu side="end" content-id="main-content">
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Menu</ion-title>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <ion-list style="display: flex; flex-direction: column;">
+          
+          <ion-menu-toggle>
+            <ion-button  
+            :class="{ active: isActive('accueil') }"
+             router-link="/accueil">Accueil</ion-button>
             </ion-menu-toggle>
-          </ion-list>
 
-          <ion-list id="labels-list">
-            <ion-list-header>Labels</ion-list-header>
+          <ion-menu-toggle>
 
-            <ion-item v-for="(label, index) in labels" lines="none" :key="index">
-              <ion-icon aria-hidden="true" slot="start" :ios="bookmarkOutline" :md="bookmarkSharp"></ion-icon>
-              <ion-label>{{ label }}</ion-label>
-            </ion-item>
-          </ion-list>
-        </ion-content>
-      </ion-menu>
-      <ion-router-outlet id="main-content"></ion-router-outlet>
-    </ion-split-pane>
+          <ion-button 
+          :class="{ active: isActive('budgets') }"
+          router-link="/budgets">Budgets</ion-button>
+        </ion-menu-toggle>
+
+        <ion-menu-toggle>
+
+          <ion-button  
+          :class="{ active: isActive('PageDepenses') }"
+          router-link="/depenses">Dépenses</ion-button>
+
+        </ion-menu-toggle>
+
+          <ion-menu-toggle>
+
+          <ion-button
+          :class="{ active: isActive('MapPage') }"
+           router-link="/map">Map de dépenses</ion-button>
+          </ion-menu-toggle>
+
+           <ion-menu-toggle>
+
+          <ion-button  
+          :class="{ active: isActive('MonCompte') }"
+          router-link="/moncompte">Mon Compte</ion-button>
+        </ion-menu-toggle>
+
+          <ion-menu-toggle>
+
+            <ion-button @click="handleLogout" v-if="isAuthenticated" style="color: rgb(0, 0, 0); font-weight: bolder;">Déconnexion</ion-button>
+          </ion-menu-toggle>
+
+        </ion-list>
+
+      </ion-content>
+    </ion-menu>
+
+
+    <ion-page id="main-content">
+      <ion-header style="display: flex; flex-direction: row; justify-content: space-between; padding: 5px; align-items: center;">
+        <img src="/smartsavingsLogo.png" alt="Smart-Savings Logo" style="height: 50px; padding: 5px; margin-left: 10px;" 
+        router-link="/moncompte"/>
+        <ion-toolbar >
+          <ion-title style="width:auto;font-weight: bold; color: rgb(0, 0, 13); font-size:22px; padding-left: 5px;">Smart Savings</ion-title>
+          <ion-buttons slot="end">  
+            <ion-back-button></ion-back-button>
+            <ion-menu-button></ion-menu-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content>
+        <ion-router-outlet></ion-router-outlet>
+
+ 
+
+
+      </ion-content>
+    </ion-page>
   </ion-app>
 </template>
 
 <script setup lang="ts">
 import {
-  IonApp,
-  IonContent,
-  IonIcon,
-  IonItem,
-  IonLabel,
-  IonList,
-  IonListHeader,
-  IonMenu,
-  IonMenuToggle,
-  IonNote,
-  IonRouterOutlet,
-  IonSplitPane,
+  IonApp, IonHeader, IonToolbar, IonTitle, IonContent, IonPage,
+  IonMenu, IonMenuButton, IonButtons, IonList, IonItem, IonRouterOutlet,
+  IonButton,IonBackButton, IonMenuToggle, IonAlert
+  
 } from '@ionic/vue';
-import { ref } from 'vue';
-import {
-  archiveOutline,
-  archiveSharp,
-  bookmarkOutline,
-  bookmarkSharp,
-  heartOutline,
-  heartSharp,
-  mailOutline,
-  mailSharp,
-  paperPlaneOutline,
-  paperPlaneSharp,
-  trashOutline,
-  trashSharp,
-  warningOutline,
-  warningSharp,
-} from 'ionicons/icons';
 
-const selectedIndex = ref(0);
-const appPages = [
-  {
-    title: 'Inbox',
-    url: '/folder/Inbox',
-    iosIcon: mailOutline,
-    mdIcon: mailSharp,
-  },
-  {
-    title: 'Outbox',
-    url: '/folder/Outbox',
-    iosIcon: paperPlaneOutline,
-    mdIcon: paperPlaneSharp,
-  },
-  {
-    title: 'Favorites',
-    url: '/folder/Favorites',
-    iosIcon: heartOutline,
-    mdIcon: heartSharp,
-  },
-  {
-    title: 'Archived',
-    url: '/folder/Archived',
-    iosIcon: archiveOutline,
-    mdIcon: archiveSharp,
-  },
-  {
-    title: 'Trash',
-    url: '/folder/Trash',
-    iosIcon: trashOutline,
-    mdIcon: trashSharp,
-  },
-  {
-    title: 'Spam',
-    url: '/folder/Spam',
-    iosIcon: warningOutline,
-    mdIcon: warningSharp,
-  },
-];
-const labels = ['Family', 'Friends', 'Notes', 'Work', 'Travel', 'Reminders'];
 
-const path = window.location.pathname.split('folder/')[1];
-if (path !== undefined) {
-  selectedIndex.value = appPages.findIndex((page) => page.title.toLowerCase() === path.toLowerCase());
-}
+import { computed } from 'vue';
+import { useStore } from 'vuex';
+import { useRoute, useRouter} from 'vue-router';
+const router = useRouter();
+
+const store = useStore();
+const route = useRoute();
+
+const isActive = (routeName: string) => {
+      return route.name === routeName;
+    };
+
+//verifie si l'utilisateur est connecté
+const isAuthenticated = computed(() => store.getters['auth/isAuthenticated']);
+
+const handleLogout = () => {
+  store.dispatch('auth/logout');
+  router.push({ name: 'connexion' });
+  
+};
+
+
 </script>
 
+
 <style scoped>
-ion-menu ion-content {
-  --background: var(--ion-item-background, var(--ion-background-color, #fff));
+body,
+html {
+  overflow: scroll;
 }
 
-ion-menu.md ion-content {
-  --padding-start: 8px;
-  --padding-end: 8px;
-  --padding-top: 20px;
-  --padding-bottom: 20px;
+header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  background-color: #6fa6df;
+  color: white;
+  padding: 20px;
+  text-align: center;
 }
 
-ion-menu.md ion-list {
-  padding: 20px 0;
+nav {
+  display: flex;
+  width: 60%;
+  justify-content: space-evenly;
+  align-items: center;
+  color: white;
+  padding: 10px 0;
+  text-align: center;
 }
 
-ion-menu.md ion-note {
-  margin-bottom: 30px;
+ion-button {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  width: 100%;
+  color: #374e77;
 }
 
-ion-menu.md ion-list-header,
-ion-menu.md ion-note {
-  padding-left: 10px;
-}
+.active {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 
-ion-menu.md ion-list#inbox-list {
-  border-bottom: 1px solid var(--ion-color-step-150, #d7d8da);
-}
-
-ion-menu.md ion-list#inbox-list ion-list-header {
-  font-size: 22px;
-  font-weight: 600;
-
-  min-height: 20px;
-}
-
-ion-menu.md ion-list#labels-list ion-list-header {
-  font-size: 16px;
-
-  margin-bottom: 18px;
-
-  color: #757575;
-
-  min-height: 26px;
-}
-
-ion-menu.md ion-item {
-  --padding-start: 10px;
-  --padding-end: 10px;
-  border-radius: 4px;
-}
-
-ion-menu.md ion-item.selected {
-  --background: rgba(var(--ion-color-primary-rgb), 0.14);
-}
-
-ion-menu.md ion-item.selected ion-icon {
-  color: var(--ion-color-primary);
-}
-
-ion-menu.md ion-item ion-icon {
-  color: #616e7e;
-}
-
-ion-menu.md ion-item ion-label {
-  font-weight: 500;
-}
-
-ion-menu.ios ion-content {
-  --padding-bottom: 20px;
-}
-
-ion-menu.ios ion-list {
-  padding: 20px 0 0 0;
-}
-
-ion-menu.ios ion-note {
-  line-height: 24px;
-  margin-bottom: 20px;
-}
-
-ion-menu.ios ion-item {
-  --padding-start: 16px;
-  --padding-end: 16px;
-  --min-height: 50px;
-}
-
-ion-menu.ios ion-item.selected ion-icon {
-  color: var(--ion-color-primary);
-}
-
-ion-menu.ios ion-item ion-icon {
-  font-size: 24px;
-  color: #73849a;
-}
-
-ion-menu.ios ion-list#labels-list ion-list-header {
-  margin-bottom: 8px;
-}
-
-ion-menu.ios ion-list-header,
-ion-menu.ios ion-note {
-  padding-left: 16px;
-  padding-right: 16px;
-}
-
-ion-menu.ios ion-note {
-  margin-bottom: 8px;
-}
-
-ion-note {
-  display: inline-block;
-  font-size: 16px;
-
-  color: var(--ion-color-medium-shade);
-}
-
-ion-item.selected {
-  --color: var(--ion-color-primary);
-}
+    color: #ffffff; /* Change to the color you want */
+    font-weight: 550;
+  }
 </style>

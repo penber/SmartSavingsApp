@@ -1,8 +1,10 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router';
-
+import store from './store';
 import { IonicVue } from '@ionic/vue';
+import axios from 'axios';
+import { IonAlert, IonContent, IonPage } from '@ionic/vue';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/vue/css/core.css';
@@ -25,8 +27,24 @@ import './theme/variables.css';
 
 const app = createApp(App)
   .use(IonicVue)
-  .use(router);
-  
+  .use(router)
+  .use(store);
+
+app.component('ion-alert', IonAlert);
+app.component('ion-content', IonContent);
+app.component('ion-page', IonPage);
+
 router.isReady().then(() => {
   app.mount('#app');
+});
+
+
+axios.interceptors.request.use(config => {
+  const token = store.state.auth.token;
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+}, error => {
+  return Promise.reject(error);
 });
